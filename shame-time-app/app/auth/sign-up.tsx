@@ -1,12 +1,6 @@
 import React, { useState } from 'react'
 import { Link, router } from 'expo-router'
-import { YStack, XStack } from '@tamagui/stacks'
-import { Input } from '@tamagui/core'
-import { Button } from '@tamagui/button'
-import { Text, H2 } from '@tamagui/text'
-import { Card } from '@tamagui/card'
-import { Form, Spinner } from 'tamagui'
-import { ScrollView } from 'react-native'
+import { View, ScrollView, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native'
 import { RouteGuard } from '../../components/common/RouteGuard'
 import { useAuthStore } from '../../store/authStore'
 
@@ -78,135 +72,214 @@ export default function SignUpScreen() {
 
   return (
     <RouteGuard requireAuth={false}>
-      <ScrollView flex={1} backgroundColor="$background">
-        <YStack flex={1} justifyContent="center" alignItems="center" padding="$6">
-          <Card
-            width="100%"
-            maxWidth={400}
-            padding="$6"
-            backgroundColor="$background"
-            borderColor="$borderColor"
-            borderWidth={1}
-            borderRadius="$4"
-          >
-            <YStack space="$4">
-              <YStack space="$2" alignItems="center">
-                <H2 color="$color" textAlign="center">Create Account</H2>
-                <Text color="$gray11" textAlign="center">
-                  Join Shame Time and start reducing your screen time
-                </Text>
-              </YStack>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
+          <View style={styles.card}>
+            <View style={styles.headerSection}>
+              <Text style={styles.title}>Create Account</Text>
+              <Text style={styles.subtitle}>
+                Join Shame Time and start reducing your screen time
+              </Text>
+            </View>
 
-              <Form onSubmit={handleSignUp}>
-                <YStack space="$3">
-                  <YStack space="$2">
-                    <XStack space="$3">
-                      <YStack flex={1} space="$1">
-                        <Input
-                          placeholder="First name"
-                          value={formData.firstName}
-                          onChangeText={(text: string) => updateFormData('firstName', text)}
-                          backgroundColor="$backgroundStrong"
-                          borderColor={errors.firstName ? '$red9' : '$borderColor'}
-                        />
-                        {errors.firstName && (
-                          <Text color="$red9" fontSize="$2">{errors.firstName}</Text>
-                        )}
-                      </YStack>
-                      
-                      <YStack flex={1} space="$1">
-                        <Input
-                          placeholder="Last name"
-                          value={formData.lastName}
-                          onChangeText={(text: string) => updateFormData('lastName', text)}
-                          backgroundColor="$backgroundStrong"
-                          borderColor={errors.lastName ? '$red9' : '$borderColor'}
-                        />
-                        {errors.lastName && (
-                          <Text color="$red9" fontSize="$2">{errors.lastName}</Text>
-                        )}
-                      </YStack>
-                    </XStack>
-                  </YStack>
-
-                  <YStack space="$1">
-                    <Input
-                      placeholder="Email address"
-                      value={formData.email}
-                      onChangeText={(text: string) => updateFormData('email', text)}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      backgroundColor="$backgroundStrong"
-                      borderColor={errors.email ? '$red9' : '$borderColor'}
-                    />
-                    {errors.email && (
-                      <Text color="$red9" fontSize="$2">{errors.email}</Text>
-                    )}
-                  </YStack>
-
-                  <YStack space="$1">
-                    <Input
-                      placeholder="Password"
-                      value={formData.password}
-                      onChangeText={(text: string) => updateFormData('password', text)}
-                      secureTextEntry
-                      backgroundColor="$backgroundStrong"
-                      borderColor={errors.password ? '$red9' : '$borderColor'}
-                    />
-                    {errors.password && (
-                      <Text color="$red9" fontSize="$2">{errors.password}</Text>
-                    )}
-                  </YStack>
-
-                  <YStack space="$1">
-                    <Input
-                      placeholder="Confirm password"
-                      value={formData.confirmPassword}
-                      onChangeText={(text: string) => updateFormData('confirmPassword', text)}
-                      secureTextEntry
-                      backgroundColor="$backgroundStrong"
-                      borderColor={errors.confirmPassword ? '$red9' : '$borderColor'}
-                    />
-                    {errors.confirmPassword && (
-                      <Text color="$red9" fontSize="$2">{errors.confirmPassword}</Text>
-                    )}
-                  </YStack>
-
-                  {error && (
-                    <Text color="$red9" fontSize="$3" textAlign="center">
-                      {error}
-                    </Text>
+            <View style={styles.form}>
+              <View style={styles.nameRow}>
+                <View style={[styles.inputGroup, { flex: 1, marginRight: 8 }]}>
+                  <TextInput
+                    style={[styles.input, errors.firstName && styles.inputError]}
+                    placeholder="First name"
+                    placeholderTextColor="#757575"
+                    value={formData.firstName}
+                    onChangeText={(text: string) => updateFormData('firstName', text)}
+                  />
+                  {errors.firstName && (
+                    <Text style={styles.errorText}>{errors.firstName}</Text>
                   )}
+                </View>
+                
+                <View style={[styles.inputGroup, { flex: 1, marginLeft: 8 }]}>
+                  <TextInput
+                    style={[styles.input, errors.lastName && styles.inputError]}
+                    placeholder="Last name"
+                    placeholderTextColor="#757575"
+                    value={formData.lastName}
+                    onChangeText={(text: string) => updateFormData('lastName', text)}
+                  />
+                  {errors.lastName && (
+                    <Text style={styles.errorText}>{errors.lastName}</Text>
+                  )}
+                </View>
+              </View>
 
-                  <Button
-                    onPress={handleSignUp}
-                    disabled={isLoading}
-                    backgroundColor="$green9"
-                    color="white"
-                    pressStyle={{ backgroundColor: '$green10' }}
-                    height="$5"
-                  >
-                    {isLoading ? (
-                      <Spinner color="white" />
-                    ) : (
-                      'Create Account'
-                    )}
-                  </Button>
-                </YStack>
-              </Form>
+              <View style={styles.inputGroup}>
+                <TextInput
+                  style={[styles.input, errors.email && styles.inputError]}
+                  placeholder="Email address"
+                  placeholderTextColor="#757575"
+                  value={formData.email}
+                  onChangeText={(text: string) => updateFormData('email', text)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                {errors.email && (
+                  <Text style={styles.errorText}>{errors.email}</Text>
+                )}
+              </View>
 
-              <XStack justifyContent="center" space="$2">
-                <Text color="$gray11">Already have an account?</Text>
-                <Link href="/auth/sign-in" asChild>
-                  <Text color="$green9" textDecorationLine="underline">
-                    Sign in
-                  </Text>
-                </Link>
-              </XStack>
-            </YStack>
-          </Card>
-        </YStack>
+              <View style={styles.inputGroup}>
+                <TextInput
+                  style={[styles.input, errors.password && styles.inputError]}
+                  placeholder="Password"
+                  placeholderTextColor="#757575"
+                  value={formData.password}
+                  onChangeText={(text: string) => updateFormData('password', text)}
+                  secureTextEntry
+                />
+                {errors.password && (
+                  <Text style={styles.errorText}>{errors.password}</Text>
+                )}
+              </View>
+
+              <View style={styles.inputGroup}>
+                <TextInput
+                  style={[styles.input, errors.confirmPassword && styles.inputError]}
+                  placeholder="Confirm password"
+                  placeholderTextColor="#757575"
+                  value={formData.confirmPassword}
+                  onChangeText={(text: string) => updateFormData('confirmPassword', text)}
+                  secureTextEntry
+                />
+                {errors.confirmPassword && (
+                  <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+                )}
+              </View>
+
+              {error && (
+                <Text style={styles.errorText}>{error}</Text>
+              )}
+
+              <TouchableOpacity
+                style={[styles.primaryButton, isLoading && styles.disabledButton]}
+                onPress={handleSignUp}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.primaryButtonText}>Create Account</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.footerSection}>
+              <Text style={styles.footerText}>Already have an account? </Text>
+              <Link href="/auth/sign-in" asChild>
+                <TouchableOpacity>
+                  <Text style={styles.linkText}>Sign in</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </RouteGuard>
   )
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#0F0F0F',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
+    minHeight: '100%',
+  },
+  card: {
+    width: '100%',
+    maxWidth: 400,
+    padding: 24,
+    backgroundColor: '#0F0F0F',
+    borderColor: '#333333',
+    borderWidth: 1,
+    borderRadius: 16,
+  },
+  headerSection: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '600',
+    color: '#F5F5F5',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#BDBDBD',
+    textAlign: 'center',
+  },
+  form: {
+    width: '100%',
+  },
+  nameRow: {
+    flexDirection: 'row',
+    marginBottom: 16,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  input: {
+    backgroundColor: '#1A1A1A',
+    borderColor: '#333333',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 16,
+    fontSize: 16,
+    color: '#F5F5F5',
+  },
+  inputError: {
+    borderColor: '#E55B5B',
+  },
+  errorText: {
+    color: '#E55B5B',
+    fontSize: 14,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  primaryButton: {
+    backgroundColor: '#6CC4A1',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 56,
+    marginBottom: 24,
+  },
+  disabledButton: {
+    opacity: 0.6,
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  footerSection: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerText: {
+    color: '#BDBDBD',
+    fontSize: 14,
+  },
+  linkText: {
+    color: '#6CC4A1',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+  },
+})
