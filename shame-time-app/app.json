@@ -14,17 +14,20 @@
       "backgroundColor": "#0F0F0F"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.shametime.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0F0F0F"
       },
+      "package": "com.shametime.app",
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",
@@ -38,10 +41,6 @@
           }
         }
       ]
-    ],
-    "extra": {
-      "supabaseUrl": process.env.EXPO_PUBLIC_SUPABASE_URL,
-      "supabaseAnonKey": process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
-    }
+    ]
   }
 }

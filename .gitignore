@@ -1,32 +1,45 @@
 ._docs/
 .claude/
+.cursor/
 .gemini/
 .taskmaster/
-.cursor/
+.github/
 
+vercel.json
 
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-dev-debug.log
-
-# Dependency directories
-node_modules/
 
 # Environment variables
 .env
+.env.local
+.env.production
 
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Dependencies
+node_modules/
+shame-time-app/node_modules/
 
-# OS specific
+# Build outputs
+shame-time-app/dist/
+shame-time-app/.expo/
+shame-time-app/web-build/
+
+# Native builds
+shame-time-app/ios/
+shame-time-app/android/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS generated files
 .DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Vercel
+.vercel
+
+# EAS
+shame-time-app/eas-build-*.tgz

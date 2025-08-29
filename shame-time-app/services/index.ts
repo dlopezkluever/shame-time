@@ -1,5 +1,7 @@
 export { supabase } from './supabase'
 export type { SupabaseClient } from './supabase'
+export { AuthService } from './authService'
+export type { SignUpData, SignInData, AuthResponse } from './authService'
 export { UserService } from './userService'
 export { GroupService } from './groupService'
 export { AppUsageService } from './appUsageService'

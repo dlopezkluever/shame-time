@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { View } from '@tamagui/core';
 import { H2, H3 } from '@tamagui/text';
@@ -6,13 +6,84 @@ import { Text } from '@tamagui/core';
 import { Card } from '@tamagui/card';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Button } from '@tamagui/button';
+import { Spinner } from 'tamagui';
 import { Users, Crown, MessageCircle, Plus, Trophy, Zap } from '@tamagui/lucide-icons';
+import { RouteGuard } from '../components/common/RouteGuard';
+import { GroupService } from '../services/groupService';
+import { useAuthStore } from '../store/authStore';
 
 export default function GroupView() {
   const [activeTab, setActiveTab] = useState<'leaderboard' | 'shameboard'>('leaderboard');
+  const [groups, setGroups] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    loadUserGroups();
+  }, [user]);
+
+  const loadUserGroups = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      const userGroups = await GroupService.getUserGroups(user.id);
+      setGroups(userGroups || []);
+    } catch (err) {
+      setError('Failed to load groups');
+      console.error('Error loading groups:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mock data fallback for development
+  const mockGroups = [
+    { 
+      id: 1,
+      name: 'Fam-o', 
+      members: 5, 
+      isAdmin: true, 
+      shamePool: 50,
+      period: '12 days left' 
+    },
+    { 
+      id: 2,
+      name: 'mental-health-queens', 
+      members: 8, 
+      isAdmin: false, 
+      shamePool: 0,
+      period: '5 days left' 
+    },
+    { 
+      id: 3,
+      name: 'Work Squad', 
+      members: 12, 
+      isAdmin: false, 
+      shamePool: 120,
+      period: '18 days left' 
+    },
+  ];
+
+  const displayGroups = groups.length > 0 ? groups : mockGroups;
+
+  if (loading) {
+    return (
+      <RouteGuard requireAuth={true}>
+        <View flex={1} justifyContent="center" alignItems="center" backgroundColor="$background">
+          <Spinner size="large" color="$color" />
+          <Text marginTop="$4" color="$color">Loading groups...</Text>
+        </View>
+      </RouteGuard>
+    );
+  }
 
   return (
-    <View flex={1} backgroundColor="$background">
+    <RouteGuard requireAuth={true}>
+      <View flex={1} backgroundColor="$background">
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
@@ -31,31 +102,34 @@ export default function GroupView() {
           Create New Group
         </Button>
 
+        {/* Error Display */}
+        {error && (
+          <Card 
+            backgroundColor="$red2" 
+            borderColor="$red9"
+            borderWidth={1}
+            borderRadius="$6" 
+            marginBottom="$4"
+            padding="$4"
+          >
+            <Text color="$red11" fontSize="$4" textAlign="center">
+              {error}
+            </Text>
+            <Button 
+              marginTop="$3"
+              variant="outlined"
+              borderColor="$red9"
+              color="$red9"
+              onPress={loadUserGroups}
+            >
+              Try Again
+            </Button>
+          </Card>
+        )}
+
         {/* Active Groups List */}
         <YStack space="$4" marginBottom="$4">
-          {[
-            { 
-              name: 'Fam-o', 
-              members: 5, 
-              isAdmin: true, 
-              shamePool: 50,
-              period: '12 days left' 
-            },
-            { 
-              name: 'mental-health-queens', 
-              members: 8, 
-              isAdmin: false, 
-              shamePool: 0,
-              period: '5 days left' 
-            },
-            { 
-              name: 'Work Squad', 
-              members: 12, 
-              isAdmin: false, 
-              shamePool: 120,
-              period: '18 days left' 
-            },
-          ].map((group, index) => (
+          {displayGroups.map((group, index) => (
             <Card 
               key={index}
               backgroundColor="$cardBackground" 
@@ -326,7 +400,8 @@ export default function GroupView() {
             </YStack>
           </YStack>
         </Card>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </RouteGuard>
   );
 }

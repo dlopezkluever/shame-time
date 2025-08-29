@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native';
 import { View } from '@tamagui/core';
 import { H2, H3 } from '@tamagui/text';
@@ -6,15 +6,153 @@ import { Text } from '@tamagui/core';
 import { Card } from '@tamagui/card';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Button } from '@tamagui/button';
-import { Clock, TrendingDown, Target, Calendar } from '@tamagui/lucide-icons';
+import { Spinner } from 'tamagui';
+import { Clock, TrendingDown, Target, Calendar, LogOut } from '@tamagui/lucide-icons';
+import { RouteGuard } from '../components/common/RouteGuard';
+import { useAuthStore } from '../store/authStore';
+import { UserService } from '../services/userService';
+import { AppUsageService } from '../services/appUsageService';
 
 export default function PersonalDashboard() {
+  const { signOut, user } = useAuthStore();
+  const [dashboardData, setDashboardData] = useState<any>({
+    shameScore: 42,
+    screenTime: '5h 23m',
+    screenTimeChange: '+32m',
+    breaches: 3,
+    dayStreak: 7,
+    categories: {
+      bad: '3h 45m',
+      neutral: '1h 12m', 
+      good: '26m'
+    }
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      loadDashboardData();
+    }
+  }, [user]);
+
+  const loadDashboardData = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Load user profile and usage data
+      const [userProfile, appUsage] = await Promise.all([
+        UserService.getUserProfile(user.id),
+        AppUsageService.getDailyUsage(user.id, new Date().toISOString().split('T')[0])
+      ]);
+
+      if (userProfile) {
+        setDashboardData((prev: any) => ({
+          ...prev,
+          shameScore: userProfile.shame_score || prev.shameScore,
+          dayStreak: userProfile.current_streak || prev.dayStreak
+        }));
+      }
+
+      if (appUsage && appUsage.length > 0) {
+        const totalScreenTime = appUsage.reduce((total: number, app: any) => total + app.usage_minutes, 0);
+        const hours = Math.floor(totalScreenTime / 60);
+        const minutes = totalScreenTime % 60;
+        
+        setDashboardData((prev: any) => ({
+          ...prev,
+          screenTime: `${hours}h ${minutes}m`,
+          breaches: appUsage.filter((app: any) => app.breach_count > 0).length
+        }));
+      }
+    } catch (err) {
+      setError('Failed to load dashboard data');
+      console.error('Dashboard data error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = () => {
+    signOut()
+  }
+
   return (
-    <View flex={1} backgroundColor="$background">
-      <ScrollView 
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
-      >
+    <RouteGuard requireAuth={true}>
+      <View flex={1} backgroundColor="$background">
+        {/* Header with Sign Out */}
+        <XStack 
+          justifyContent="space-between" 
+          alignItems="center" 
+          padding="$4" 
+          paddingTop="$6"
+          borderBottomWidth={1}
+          borderBottomColor="$borderColor"
+        >
+          <YStack>
+            <H2 color="$color" fontSize="$6" fontWeight="600">
+              Welcome back
+            </H2>
+            <Text color="$gray11" fontSize="$3">
+              {user?.user_metadata?.first_name} {user?.user_metadata?.last_name}
+            </Text>
+          </YStack>
+          <XStack space="$2">
+            <Button
+              onPress={loadDashboardData}
+              variant="outlined"
+              size="$3"
+              borderColor="$green9"
+              color="$green9"
+              disabled={loading}
+            >
+              {loading ? <Spinner size="small" /> : 'Refresh'}
+            </Button>
+            <Button
+              onPress={handleSignOut}
+              variant="outlined"
+              size="$3"
+              borderColor="$red9"
+              color="$red9"
+              icon={<LogOut size={16} />}
+            >
+              Sign Out
+            </Button>
+          </XStack>
+        </XStack>
+
+        {/* Error Display */}
+        {error && (
+          <Card 
+            margin="$4"
+            backgroundColor="$red2" 
+            borderColor="$red9"
+            borderWidth={1}
+            borderRadius="$6" 
+            padding="$4"
+          >
+            <Text color="$red11" fontSize="$4" textAlign="center">
+              {error}
+            </Text>
+            <Button 
+              marginTop="$3"
+              variant="outlined"
+              borderColor="$red9"
+              color="$red9"
+              onPress={loadDashboardData}
+            >
+              Try Again
+            </Button>
+          </Card>
+        )}
+
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
+        >
         {/* Shame Score Card */}
         <Card 
           backgroundColor="$cardBackground" 
@@ -37,10 +175,13 @@ export default function PersonalDashboard() {
               <Text 
                 fontSize={72} 
                 fontWeight="bold" 
-                color="#6CC4A1"
+                color={
+                  dashboardData.shameScore <= 25 ? "#6CC4A1" :
+                  dashboardData.shameScore <= 75 ? "#F7DC6F" : "#E55B5B"
+                }
                 lineHeight={80}
               >
-                42
+                {loading ? "--" : dashboardData.shameScore}
               </Text>
               <Text color="$placeholderColor" fontSize="$3">
                 Lower is better
@@ -81,10 +222,10 @@ export default function PersonalDashboard() {
                 color="#F7DC6F"
                 lineHeight={56}
               >
-                5h 23m
+                {loading ? "--" : dashboardData.screenTime}
               </Text>
               <Text color="$placeholderColor" fontSize="$3">
-                +32m from yesterday
+                {dashboardData.screenTimeChange} from yesterday
               </Text>
             </YStack>
           </YStack>
@@ -231,7 +372,7 @@ export default function PersonalDashboard() {
           >
             <YStack space="$2" alignItems="center">
               <Text color="#E55B5B" fontSize="$6" fontWeight="bold">
-                3
+                {loading ? "--" : dashboardData.breaches}
               </Text>
               <Text color="$placeholderColor" fontSize="$2" textAlign="center">
                 Breaches Today
@@ -249,7 +390,7 @@ export default function PersonalDashboard() {
           >
             <YStack space="$2" alignItems="center">
               <Text color="#6CC4A1" fontSize="$6" fontWeight="bold">
-                7
+                {loading ? "--" : dashboardData.dayStreak}
               </Text>
               <Text color="$placeholderColor" fontSize="$2" textAlign="center">
                 Day Streak
@@ -257,7 +398,8 @@ export default function PersonalDashboard() {
             </YStack>
           </Card>
         </XStack>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </RouteGuard>
   );
 }

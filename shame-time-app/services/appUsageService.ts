@@ -27,6 +27,13 @@ export class AppUsageService {
   }
 
   /**
+   * Get daily usage data for a user on a specific date (alias for getUserAppUsage)
+   */
+  static async getDailyUsage(userId: string, date: string): Promise<DailyAppUsage[]> {
+    return this.getUserAppUsage(userId, date)
+  }
+
+  /**
    * Get app usage for a user on a specific date
    */
   static async getUserAppUsage(userId: string, date: string): Promise<DailyAppUsage[]> {

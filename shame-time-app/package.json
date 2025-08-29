@@ -1,12 +1,17 @@
 {
   "name": "shame-time-app",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:web": "expo build:web",
+    "export": "expo export -p web",
+    "test": "echo \"No tests specified\" && exit 0",
+    "lint": "echo \"No linting configured\" && exit 0",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.4.6",
@@ -35,6 +40,7 @@
     "react-native": "0.79.6",
     "react-native-web": "^0.21.1",
     "recharts": "^3.1.2",
+    "tamagui": "^1.132.23",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

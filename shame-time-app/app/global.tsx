@@ -7,10 +7,15 @@ import { Card } from '@tamagui/card';
 import { XStack, YStack } from '@tamagui/stacks';
 import { Button } from '@tamagui/button';
 import { Globe, Trophy, TrendingUp, MapPin } from '@tamagui/lucide-icons';
+import { RouteGuard } from '../components/common/RouteGuard';
+import { useAuthStore } from '../store/authStore';
 
 export default function GlobalStats() {
+  const { user } = useAuthStore();
+  
   return (
-    <View flex={1} backgroundColor="$background">
+    <RouteGuard requireAuth={true}>
+      <View flex={1} backgroundColor="$background">
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ padding: 16, paddingBottom: 20 }}
@@ -279,7 +284,8 @@ export default function GlobalStats() {
             </YStack>
           </Card>
         </XStack>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </RouteGuard>
   );
 }

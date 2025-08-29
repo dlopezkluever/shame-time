@@ -82,6 +82,35 @@ export class UserService {
   }
 
   /**
+   * Get user profile with additional computed data
+   */
+  static async getUserProfile(userId: string): Promise<(User & { shame_score?: number; current_streak?: number }) | null> {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (error) {
+        console.error('Error fetching user profile:', error)
+        return null
+      }
+
+      // For now, return basic profile data with mock values
+      // TODO: Calculate actual shame score and streak from app usage data
+      return {
+        ...data,
+        shame_score: 42, // Mock value
+        current_streak: 7 // Mock value
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error)
+      return null
+    }
+  }
+
+  /**
    * Get user by ID (for viewing friends' profiles)
    */
   static async getUserById(userId: string): Promise<User | null> {

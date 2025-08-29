@@ -2,12 +2,15 @@
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { TamaguiProvider } from './providers/TamaguiProvider';
+import { AuthProvider } from './providers/AuthProvider';
 
 export default function RootLayout() {
   return (
     <TamaguiProvider>
-      <StatusBar style="light" backgroundColor="#0F0F0F" />
-      <Slot />
+      <AuthProvider>
+        <StatusBar style="light" backgroundColor="#0F0F0F" />
+        <Slot />
+      </AuthProvider>
     </TamaguiProvider>
   );
 }

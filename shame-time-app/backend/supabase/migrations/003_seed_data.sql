@@ -6,22 +6,21 @@ INSERT INTO app_categories (app_name, app_bundle_id, category, default_time_limi
 ('TikTok', 'com.zhiliaoapp.musically', 'bad', 30), -- Alternative bundle ID
 ('Instagram', 'com.instagram.android', 'bad', 45),
 ('Facebook', 'com.facebook.katana', 'bad', 60),
-('Twitter', 'com.twitter.android', 'bad', 45),
 ('X', 'com.twitter.android', 'bad', 45), -- X (formerly Twitter)
 ('Pinterest', 'com.pinterest', 'bad', 60),
 ('Tumblr', 'com.tumblr', 'bad', 60),
 ('Snapchat', 'com.snapchat.android', 'bad', 45),
 ('Netflix', 'com.netflix.mediaclient', 'bad', 120),
-('Disney+', 'com.disney.disneyplus', 'bad', 120),
+('Disney+', 'com.disney.disneyplus.android', 'bad', 120),
 ('Hulu', 'com.hulu.plus', 'bad', 120),
 ('Amazon Prime Video', 'com.amazon.avod.thirdpartyclient', 'bad', 120),
-('HBO Max', 'com.hbo.hbonow', 'bad', 120),
+('HBO Max', 'com.hbo.android', 'bad', 120),
 ('Twitch', 'tv.twitch.android.app', 'bad', 90),
 ('Reddit', 'com.reddit.frontpage', 'bad', 60),
 ('9GAG', 'com.ninegag.android.app', 'bad', 45),
 ('Vine', 'co.vine.android', 'bad', 30),
 ('BeReal', 'com.bereal.ft', 'bad', 15),
-('VSCO', 'com.vsco.cam', 'bad', 45),
+('VSCO', 'com.vsco.android', 'bad', 45),
 ('Candy Crush', 'com.king.candycrushsaga', 'bad', 30),
 ('PUBG Mobile', 'com.tencent.ig', 'bad', 60),
 ('Fortnite', 'com.epicgames.fortnite', 'bad', 60),
@@ -31,22 +30,17 @@ INSERT INTO app_categories (app_name, app_bundle_id, category, default_time_limi
 
 -- iOS specific bundle IDs for bad apps
 INSERT INTO app_categories (app_name, app_bundle_id, category, default_time_limit_minutes) VALUES
-('TikTok', 'com.zhiliaoapp.musically', 'bad', 30),
 ('Instagram', 'com.burbn.instagram', 'bad', 45),
 ('Facebook', 'com.facebook.Facebook', 'bad', 60),
-('Twitter', 'com.atebits.Tweetie2', 'bad', 45),
 ('X', 'com.atebits.Tweetie2', 'bad', 45),
 ('Pinterest', 'pinterest', 'bad', 60),
 ('Snapchat', 'com.toyopagroup.picaboo', 'bad', 45),
 ('Netflix', 'com.netflix.Netflix', 'bad', 120),
-('Disney+', 'com.disney.disneyplus', 'bad', 120),
 ('Hulu', 'com.hulu.Hulu', 'bad', 120),
 ('Amazon Prime Video', 'com.amazon.aiv.AIVApp', 'bad', 120),
-('HBO Max', 'com.hbo.hbonow', 'bad', 120),
 ('Twitch', 'tv.twitch', 'bad', 90),
 ('Reddit', 'com.reddit.Reddit', 'bad', 60),
 ('BeReal', 'AlexisBarreyat.BeReal', 'bad', 15),
-('VSCO', 'com.vsco.cam', 'bad', 45),
 ('Candy Crush', 'com.midasplayer.apps.candycrushsaga', 'bad', 30);
 
 -- Neutral Apps (Less significant impact on shame score)
